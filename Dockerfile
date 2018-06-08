@@ -28,6 +28,11 @@ RUN apk add --update \
   pip install --upgrade python-keyczar pycrypto cryptography ansible && \
   rm -rf /var/cache/apk/*
 
+## Install config transpiler for CoreOS
+
+RUN wget https://github.com/coreos/container-linux-config-transpiler/releases/download/v0.9.0/ct-v0.9.0-x86_64-unknown-linux-gnu && \
+    mv ct-v0.9.0-x86_64-unknown-linux-gnu /usr/local/bin/ct && \
+    chmod 755 /usr/local/bin/ct
 
 ## Ansible install
 
@@ -40,12 +45,8 @@ RUN git clone --recursive https://github.com/ansible/ansible.git ./ && \
     git checkout stable-${ANSIBLE_VERSION} && \
     source /ansible/hacking/env-setup
 
-#RUN \
-#  curl -fsSL https://releases.ansible.com/ansible/ansible-2.2.2.0.tar.gz -o ansible.tar.gz && \
-#  tar -xzf ansible.tar.gz -C ansible --strip-components 1 && \
-#  rm -fr ansible.tar.gz /ansible/docs /ansible/examples /ansible/packaging
-
-RUN mkdir -p /ansible/playbooks
+RUN mkdir -p /ansible/playbooks && \
+    mkdir -p /root/.ansible/cp
 WORKDIR /ansible/playbooks
 
 ENV ANSIBLE_GATHERING smart
